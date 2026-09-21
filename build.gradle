@@ -1,0 +1,64 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+group = 'com.doradux.tradesearchcycler'
+version = '1.1.0'
+
+base {
+    archivesName = 'trade-cycling-enchantment-search-forge-1.20.1'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.22'
+    compileOnly files('libs/trade-cycling-forge-1.20.1-1.0.18.jar')
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [version: project.version]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.register('regressionTest', JavaExec) {
+    dependsOn testClasses
+    // The regression runner exercises pure layout/session code; it needs no game runtime.
+    classpath = files(sourceSets.test.output, sourceSets.main.output)
+    mainClass = 'com.doradux.tradesearchcycler.RegressionTests'
+}
+tasks.named('check') { dependsOn 'regressionTest' }
+tasks.named('test') {
+    classpath = files(sourceSets.test.output, sourceSets.main.output)
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title': 'Trade Search Cycler',
+            'Specification-Vendor': 'Doradux',
+            'Specification-Version': '1',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.jar.archiveVersion,
+            'Implementation-Vendor': 'Doradux'
+        ])
+    }
+    finalizedBy 'reobfJar'
+}

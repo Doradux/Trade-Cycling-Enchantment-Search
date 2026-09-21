@@ -1,0 +1,29 @@
+﻿# Gradle
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+bin/
+
+# Minecraft Forge run directories & logs
+run/
+runs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local machine installation scripts
+Install-BeyondDepth.ps1
